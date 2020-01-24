@@ -1,0 +1,71 @@
+﻿@page "/Libros"
+
+@using DataAccess
+@using Modelos
+
+@inject LibroDataAccess libroDataAccess
+
+<h3>Insertar Libro</h3>
+<EditForm Model="@libro" OnValidSubmit="@InsertarLibro">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<label>Id
+	<InputNumber id="id" @bind-Value="@libro.Id" /></label>
+	<label>Titulo
+	<InputText id="titulo" @bind-Value="@libro.Titulo" /></label>
+	<label>Precio
+	<InputNumber id="precio" @bind-Value="@libro.Precio" /></label>
+	<label>Cantidad
+	<InputNumber id="cantidad" @bind-Value="@libro.Cantidad" /></label>
+
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+<h3>ListaLibros</h3>
+
+@if (libros == null)
+{
+	<p><em>Cargando...</em></p>
+}
+else
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Titulo</th>
+				<th>Precio</th>
+				<th>Cantidad</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var libro in libros)
+			{
+				<tr>
+					<td>@libro.Id</td>
+					<td>@libro.Titulo</td>
+					<td>@libro.Precio</td>
+					<td>@libro.Cantidad</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+
+	private List<LibroModel> libros;
+	private LibroModel libro = new LibroModel();
+
+	protected override void OnInitialized()
+	{
+		libros = libroDataAccess.ObtenerLibros();
+	}
+
+	private void InsertarLibro()
+	{
+		libroDataAccess.GuardarLibro(libro);
+		libro = new LibroModel();
+	}
+}
